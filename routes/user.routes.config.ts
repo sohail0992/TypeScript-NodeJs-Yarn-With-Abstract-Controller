@@ -16,7 +16,11 @@ export class UserRoutes extends CommonRoutesConfig {
 
         this.app.route(`/user/find-with-conditions`)
             .post(UserController.getData.bind(UserController));
-     
+
+        this.app.route(`/user/:id`)
+            .put(
+                UserController.updateUser.bind(UserController));
+        
         return this.app;
     }
 }

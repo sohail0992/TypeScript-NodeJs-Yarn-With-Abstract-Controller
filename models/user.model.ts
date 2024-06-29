@@ -9,6 +9,12 @@ const UserSchema = new Schema({
         type: String,
         index: true,
         background: true
+    },
+    email: {
+        unique: true,
+        type: String,
+        index: true,
+        background: true
     }
 }, { timestamps: true, strict: false });
 

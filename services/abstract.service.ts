@@ -64,7 +64,8 @@ export class Abstract implements CRUD  {
 
     async updateById(data: any) {
         try {
-            const query = data._id ?  { '_id': data._id } : { 'email': data.email } ;
+            const id = data._id || data.id;
+            const query = id ?  { '_id': id } : { 'email': data.email } ;
             const result = await this.Model.findByIdAndUpdate(query, { '$set': data }, { new: true, upsert: false }).lean();
             return result;
         } catch (err) {
