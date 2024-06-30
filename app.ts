@@ -53,7 +53,8 @@ app.get('/', (req: express.Request, res: express.Response) => {
 routes.push(new UserRoutes(app));
 
 if (process.env.SERVERLESS === 'true') {
-    module.exports.handler = serverless(app);
+    const lambdaHandler = serverless(app);
+    module.exports.handler = lambdaHandler;
 } else {
     server.listen(port, () => {
         debugLog(`Server running at http://localhost:${port}`);
