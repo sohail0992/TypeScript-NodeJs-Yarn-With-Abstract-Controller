@@ -7,6 +7,7 @@
     "watch": "ts-node-dev --respawn app.ts",
     "start": "ts-node --transpile-only app.ts",
     "build": "tsc -p .",
+    "clean": "tsc --build --clean",
     "start:prod": "node build/server.js",
     "debug": "export DEBUG=* && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -30,6 +31,7 @@
   "homepage": "https://github.com/makinhs/toptal-rest-series#readme",
   "dependencies": {
     "argon2": "^0.40.3",
+    "aws-lambda": "^1.0.7",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
     "debug": "^4.2.0",
@@ -38,6 +40,8 @@
     "express-winston": "^4.0.5",
     "mongoose": "^8.4.4",
     "multer": "^1.4.5-lts.1",
+    "serverless-http": "^3.2.0",
+    "serverless-offline": "^13.6.0",
     "shortid": "^2.2.16",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",

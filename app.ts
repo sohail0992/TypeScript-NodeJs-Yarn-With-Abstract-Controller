@@ -5,6 +5,8 @@ import * as http from 'http';
 import * as bodyparser from 'body-parser';
 import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
+import serverless from "serverless-http";
+
 import cors from 'cors'
 import { CommonRoutesConfig } from './common/common.routes.config';
 import { UserRoutes } from './routes/user.routes.config';
@@ -50,10 +52,15 @@ app.get('/', (req: express.Request, res: express.Response) => {
 
 routes.push(new UserRoutes(app));
 
-server.listen(port, () => {
-    debugLog(`Server running at http://localhost:${port}`);
-    console.info(`Server running at http://localhost:${port}`);
-    routes.forEach((route: CommonRoutesConfig) => {
-        debugLog(`Routes configured for ${route.getName()}`);
+if (process.env.SERVERLESS === 'true') {
+    const lambdaHandler = serverless(app);
+    module.exports.handler = lambdaHandler;
+} else {
+    server.listen(port, () => {
+        debugLog(`Server running at http://localhost:${port}`);
+        console.info(`Server running at http://localhost:${port}`);
+        routes.forEach((route: CommonRoutesConfig) => {
+            debugLog(`Routes configured for ${route.getName()}`);
+        });
     });
-});
+}
