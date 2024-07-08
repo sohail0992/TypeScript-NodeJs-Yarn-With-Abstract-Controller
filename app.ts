@@ -46,6 +46,14 @@ app.use(expressWinston.errorLogger({
     )
 }));
 
+app.get('/f2captcha.txt', (req: express.Request, res: express.Response) => {
+    const text = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMzQxNjU3NSIsImlhdCI6MTcyMDQ0MjIyMH0.Sp-MK7NzRqfZOPSZWhhLg9I4yr9idBSx4895n1SHGtM';
+    res.setHeader('Content-type', "application/octet-stream");
+    res.setHeader('Content-disposition', 'attachment; filename=f2captcha.txt');
+    res.send(text);
+});
+
+
 app.use(verifyToken);
 
 app.get('/', (req: express.Request, res: express.Response) => {
