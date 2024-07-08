@@ -21,10 +21,10 @@ class CaptchaController {
     async create(req: express.Request, res: express.Response) {
         try {
             const data = req.body as any;
-            // const existingRecord = <any> await this.findByBase64(data.image);
-            // if (existingRecord) {
-            //     return res.status(200).send({ existingRecord: true, answer: existingRecord.answer });
-            // }
+            const existingRecord = <any> await this.findByBase64(data.image);
+            if (existingRecord) {
+                return res.status(200).send({ existingRecord: true, answer: existingRecord.answer });
+            }
             const response = await axios.post(process.env.CAPTCHA_SERVICE + '/createTask', {
               "clientKey": process.env.CAPTCHA_SERVICE_KEY,
               "task": {
