@@ -17,6 +17,7 @@ import { verifyToken } from './middleware/verify-token';
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
 const port = process.env.PORT || 3000;
+console.info(`Server running at http://localhost:${port}`);
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug('app');
 mongoose.connect(process.env.MONGO_URL || '').catch(console.error);
