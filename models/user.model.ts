@@ -1,10 +1,9 @@
 'use strict';
 import mongoose, { Schema } from 'mongoose';
-import { UserDTO } from "../dto/user.dto";
+import { UserDTO } from ../dto/user.dto;
 
 const UserSchema = new Schema({
-    firstName: String,
-    lastName: String,
+    fullName: String,
     phone: {
         type: String,
         index: true,
@@ -15,8 +14,12 @@ const UserSchema = new Schema({
         type: String,
         index: true,
         background: true
-    }
+    },
+    subscription: {
+		months: [String],
+		subscriptionEmailOnly: false,
+		centers: [String]
+	}
 }, { timestamps: true, strict: false });
 
 export default mongoose.model<UserDTO>('User', UserSchema);
-
