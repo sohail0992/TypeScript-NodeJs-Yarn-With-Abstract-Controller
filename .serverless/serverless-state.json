@@ -9,9 +9,7 @@
       "runtime": "nodejs18.x",
       "region": "us-east-1",
       "environment": {
-        "SERVERLESS": "true",
-        "TOKEN": "b7e8fdd2e1a5a4f8c4d2e3f0d1a7b5e6_BA",
-        "MONGO_URL": "mongodb+srv://crmuser:BmyDhjt2rSrWSktH@crm.9dk5luc.mongodb.net/subscriber_management?retryWrites=true&w=majority"
+        "SERVERLESS": "true"
       },
       "stage": "dev",
       "versionFunctions": true,
@@ -179,7 +177,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/subscribers/dev/1719771167943-2024-06-30T18:12:47.943Z/subscribers.zip"
+                "S3Key": "serverless/subscribers/dev/1720433530200-2024-07-08T10:12:10.200Z/subscribers.zip"
               },
               "Handler": "dist/app.handler",
               "Runtime": "nodejs18.x",
@@ -188,9 +186,7 @@
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "SERVERLESS": "true",
-                  "TOKEN": "b7e8fdd2e1a5a4f8c4d2e3f0d1a7b5e6_BA",
-                  "MONGO_URL": "mongodb+srv://crmuser:BmyDhjt2rSrWSktH@crm.9dk5luc.mongodb.net/subscriber_management?retryWrites=true&w=majority"
+                  "SERVERLESS": "true"
                 }
               },
               "Role": {
@@ -204,14 +200,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersion6IyqK7EiocMYqTV9poLUuLSvLlNIyR7bqfOkAfmK9Y": {
+          "AppLambdaVersionSmNGQVNO4ZlbMZxlSxlmDkeae8HsQ9fVA2fluk4iY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "hCDgflWIwTZAekXPBk4A9EbFlWh9+UVk3qV0Vo/CMZc="
+              "CodeSha256": "8rShdT+KPa1gu8WmCppVUSEaa7k0t9Na11uXkNzavsk="
             }
           },
           "ApiGatewayRestApi": {
@@ -429,7 +425,7 @@
               "AppLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1719771161774": {
+          "ApiGatewayDeployment1720433523172": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -494,7 +490,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersion6IyqK7EiocMYqTV9poLUuLSvLlNIyR7bqfOkAfmK9Y"
+              "Ref": "AppLambdaVersionSmNGQVNO4ZlbMZxlSxlmDkeae8HsQ9fVA2fluk4iY"
             },
             "Export": {
               "Name": "sls-subscribers-dev-AppLambdaFunctionQualifiedArn"
@@ -675,7 +671,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersion6IyqK7EiocMYqTV9poLUuLSvLlNIyR7bqfOkAfmK9Y"
+        "versionLogicalId": "AppLambdaVersionSmNGQVNO4ZlbMZxlSxlmDkeae8HsQ9fVA2fluk4iY"
       }
     },
     "configValidationMode": "warn",
@@ -695,10 +691,10 @@
     "appId": null,
     "orgId": null,
     "layers": {},
-    "artifact": "/Users/msohailse/home/ownwork/TypeScript-NodeJs-Yarn-With-Abstract-Controller/.serverless/subscribers.zip"
+    "artifact": "/Users/msohailse/home/ownwork/subscripers/.serverless/subscribers.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/subscribers/dev/1719771167943-2024-06-30T18:12:47.943Z",
+    "artifactDirectoryName": "serverless/subscribers/dev/1720433530200-2024-07-08T10:12:10.200Z",
     "artifact": "subscribers.zip"
   }
 }

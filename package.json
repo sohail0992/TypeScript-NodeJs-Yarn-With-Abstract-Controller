@@ -6,9 +6,10 @@
   "scripts": {
     "watch": "ts-node-dev --respawn app.ts",
     "start": "ts-node --transpile-only app.ts",
+    "dev": "tsc && node dist/app.js",
     "build": "tsc -p .",
     "clean": "tsc --build --clean",
-    "start:prod": "node build/server.js",
+    "start:prod": "node dist/server.js",
     "debug": "export DEBUG=* && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

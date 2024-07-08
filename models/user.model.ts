@@ -1,6 +1,6 @@
 'use strict';
 import mongoose, { Schema } from 'mongoose';
-import { UserDTO } from ../dto/user.dto;
+import { UserDTO } from '../dto/user.dto';
 
 const UserSchema = new Schema({
     fullName: String,
@@ -17,7 +17,7 @@ const UserSchema = new Schema({
     },
     subscription: {
 		months: [String],
-		subscriptionEmailOnly: false,
+		subscriptionEmailOnly: Boolean,
 		centers: [String]
 	}
 }, { timestamps: true, strict: false });
