@@ -177,7 +177,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/subscribers/dev/1720433530200-2024-07-08T10:12:10.200Z/subscribers.zip"
+                "S3Key": "serverless/subscribers/dev/1720442062165-2024-07-08T12:34:22.165Z/subscribers.zip"
               },
               "Handler": "dist/app.handler",
               "Runtime": "nodejs18.x",
@@ -200,14 +200,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersionSmNGQVNO4ZlbMZxlSxlmDkeae8HsQ9fVA2fluk4iY": {
+          "AppLambdaVersionu86CiXyLSWuTl4vaX1TScuNIXjUY3SCGWxZts01Ms": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "8rShdT+KPa1gu8WmCppVUSEaa7k0t9Na11uXkNzavsk="
+              "CodeSha256": "f/CiUQ+NYNssDvkHSqzS+fTO08w+4X2XOtJgZ8QnEJY="
             }
           },
           "ApiGatewayRestApi": {
@@ -425,7 +425,7 @@
               "AppLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1720433523172": {
+          "ApiGatewayDeployment1720442055266": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -490,7 +490,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersionSmNGQVNO4ZlbMZxlSxlmDkeae8HsQ9fVA2fluk4iY"
+              "Ref": "AppLambdaVersionu86CiXyLSWuTl4vaX1TScuNIXjUY3SCGWxZts01Ms"
             },
             "Export": {
               "Name": "sls-subscribers-dev-AppLambdaFunctionQualifiedArn"
@@ -671,7 +671,7 @@
         "timeout": 6,
         "runtime": "nodejs18.x",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersionSmNGQVNO4ZlbMZxlSxlmDkeae8HsQ9fVA2fluk4iY"
+        "versionLogicalId": "AppLambdaVersionu86CiXyLSWuTl4vaX1TScuNIXjUY3SCGWxZts01Ms"
       }
     },
     "configValidationMode": "warn",
@@ -694,7 +694,7 @@
     "artifact": "/Users/msohailse/home/ownwork/subscripers/.serverless/subscribers.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/subscribers/dev/1720433530200-2024-07-08T10:12:10.200Z",
+    "artifactDirectoryName": "serverless/subscribers/dev/1720442062165-2024-07-08T12:34:22.165Z",
     "artifact": "subscribers.zip"
   }
 }
