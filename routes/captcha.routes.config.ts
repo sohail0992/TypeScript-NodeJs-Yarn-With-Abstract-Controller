@@ -9,12 +9,14 @@ export class CaptchaRoutes extends CommonRoutesConfig {
 
     configureRoutes() {
         this.app.route(`/captcha/callback`)
-        .post(
-            CaptchaController.callBack.bind(CaptchaController));
+            .post(
+                CaptchaController.callBack.bind(CaptchaController));
 
         this.app.route(`/captcha`)
             .post(
-                CaptchaController.create.bind(CaptchaController));
+                CaptchaController.create.bind(CaptchaController))
+            .get(
+                CaptchaController.getCaptchByToken.bind(CaptchaController));
 
         this.app.route(`/captcha/find-with-conditions`)
             .post(CaptchaController.getData.bind(CaptchaController));
@@ -22,7 +24,7 @@ export class CaptchaRoutes extends CommonRoutesConfig {
         this.app.route(`/captcha/:id`)
             .put(
                 CaptchaController.updateCaptcha.bind(CaptchaController));
-        
+
         return this.app;
     }
 }

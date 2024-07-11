@@ -3,6 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const CaptchaSchema = new Schema({
     image: {
+        unique: true,
         type: String,
         index: true,
         background: true
