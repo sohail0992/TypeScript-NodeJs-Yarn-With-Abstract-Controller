@@ -21,37 +21,8 @@ class CaptchaController {
     async create(req: express.Request, res: express.Response) {
         try {
             const data = req.body as any;
-            const existingRecord = <any> await this.findByBase64(data.image);
-            if (existingRecord) {
-                if (existingRecord?.answer) {
-                    return res.status(200).send({ existingRecord: true, answer: existingRecord.answer });
-                }
-                const timeSofar = new Date().getTime() - new Date(existingRecord.updatedAt).getTime();
-                console.info(timeSofar, 'timeSofar')
-                // if time so far is less than 15 min then return the existing record
-                if (timeSofar < 900000) {
-                    return res.status(500).send({ existingRecord: false, err: 'Time is less than 15 min you have to wait and sumbit again' });
-                }
-            }
-            const response = await axios.post(process.env.CAPTCHA_SERVICE + '/createTask', {
-              "clientKey": process.env.CAPTCHA_SERVICE_KEY,
-              "task": {
-                  "type": "ImageToTextTask",
-                  "body": data.image,
-                  "phrase": false,
-                  "case": true,
-                  "numeric": 0,
-                  "math": false,
-                  "minLength": 1,
-                  "maxLength": 5,
-                  "comment": ""
-              },
-              "languagePool": "en"
-            });
-            if (response?.data?.errorCode) throw response.data.errorCode + ' ' + response.data.errorDescription;
-            data.taskId = response.data.taskId;
-            const result = await Captcha.findOneAndUpdate({ image: data.image }, { $set: data }, { upsert: true, new: true}).lean();
-            res.status(200).send({ existingRecord: false , ...result });
+            const result = await this.createCaptchaWithTaskId(data, false);
+            res.status(200).send({ existingRecord: false, result: result });
         } catch (err) {
             console.error(err, 'errro on create')
             log(err, 'error on add Data');
@@ -59,11 +30,79 @@ class CaptchaController {
         }
     }
 
+    async createAndSolve(req: express.Request, res: express.Response) {
+        try {
+            const data = req.body as any;
+            const result = await this.createCaptchaWithTaskId(data, true);
+            res.status(200).send(result);
+        } catch (err) {
+            console.error(err, 'errro on create')
+            log(err, 'error on add Data');
+            res.status(500).send(err);
+        }
+    }
+
+    async createCaptchaWithTaskId(data: any, waitForAnswer: boolean) {
+        const existingRecord = <any>await this.findByBase64(data.image);
+        if (existingRecord) {
+            if (existingRecord?.answer) {
+                return { existingRecord: true, answer: existingRecord.answer, taskId: existingRecord.taskId };
+            }
+            const timeSofar = new Date().getTime() - new Date(existingRecord.updatedAt).getTime();
+            console.info(timeSofar, 'timeSofar')
+            // if time so far is less than 15 min then return the existing record
+            if (timeSofar < 900000) {
+                console.info('Time is less than 15 min, wait for answer ', waitForAnswer)
+                if (waitForAnswer) {
+                    const resp = await this.getTheAnswer(existingRecord);
+                    return resp;
+                }
+                return { existingRecord: false, taskId: existingRecord.taskId, err: 'Time is less than 15 min you have to wait and submit again' };
+
+            }
+        }
+        const response = await axios.post(process.env.CAPTCHA_SERVICE + '/createTask', {
+            "clientKey": process.env.CAPTCHA_SERVICE_KEY,
+            "task": {
+                "type": "ImageToTextTask",
+                "body": data.image,
+                "phrase": false,
+                "case": true,
+                "numeric": 0,
+                "math": false,
+                "minLength": 1,
+                "maxLength": 5,
+                "comment": ""
+            },
+            "languagePool": "en"
+        });
+        if (response?.data?.errorCode) throw response.data.errorCode + ' ' + response.data.errorDescription;
+        data.taskId = response.data.taskId;
+        const result = <any>await Captcha.findOneAndUpdate({ image: data.image }, { $set: data }, { upsert: true, new: true }).lean();
+        if (waitForAnswer) {
+            const resp = await this.getTheAnswer(result);
+            return resp;
+        }
+        return { existingRecord: result?.answer ? true : false, taskId: result?.taskId, answer: result?.answer };
+    }
+
+    async getTheAnswer(existingRecord: any) {
+        return new Promise((resolve, reject) => {
+            console.info('waiting started for answer at ', new Date().toTimeString() + ' for task', existingRecord.taskId);
+            setTimeout(async () => {
+                const answer = await this.getCaptchaAnswer(existingRecord.taskId);
+                if (answer) {
+                    return resolve({ existingRecord: true, answer: answer, taskId: existingRecord.taskId });
+                }
+            }, 10000);
+        });
+    }
+
     async callBack(req: express.Request, res: express.Response) {
         try {
             const data = req.query as any;
-            await Captcha.findOneAndUpdate({ taskId: data.id }, { $set: { answer: data.answer }});
-            res.status(200).send({ succss: true} );
+            await Captcha.findOneAndUpdate({ taskId: data.id }, { $set: { answer: data.answer } });
+            res.status(200).send({ succss: true });
         } catch (err) {
             log(err, 'error on add Data');
             res.status(500).send(err);
@@ -74,7 +113,7 @@ class CaptchaController {
         try {
             const data = req.query as any;
             const answer = await this.getCaptchaAnswer(data.token);
-            res.status(200).send({ succss: true, answer: answer});
+            res.status(200).send({ succss: true, answer: answer });
         } catch (err) {
             log(err, 'error on add Data');
             res.status(500).send(err);
@@ -85,7 +124,7 @@ class CaptchaController {
     async updateCaptcha(req: express.Request, res: express.Response) {
         try {
             const data = req.body as any;
-            const result = await this.abstractService.updateById({...data, id: req.params.id});
+            const result = await this.abstractService.updateById({ ...data, id: req.params.id });
             res.status(200).send(result);
         } catch (err) {
             log(err, 'error while updating Data');
@@ -93,26 +132,28 @@ class CaptchaController {
         }
     }
 
-    async getCaptchaAnswer(token: string) {
+    async getCaptchaAnswer(token: Number) {
         try {
-            console.log(token, 'token');
-            const existingRecord = <any> await this.findByToken(token);
-            if (existingRecord) {
+            console.log('checking solution in db', 'token');
+            const existingRecord = <any>await this.findByToken(token);
+            if (existingRecord && existingRecord?.answer) {
                 return existingRecord.answer;
             }
+            console.info('getting the solution from service');
             const response = await axios.post(process.env.CAPTCHA_SERVICE + '/getTaskResult', {
                 "clientKey": process.env.CAPTCHA_SERVICE_KEY,
                 "taskId": token
             });
             if (response?.data?.errorCode) throw response.data.errorCode + ' ' + response.data.errorDescription;
             // update answer in db
-            Captcha.findOneAndUpdate({ taskId: token }, { $set: { answer: response.data.solution.text }}).then(() => console.info('udpated'));
+            Captcha.findOneAndUpdate({ taskId: token }, { $set: { answer: response.data.solution.text } }).then(() => console.info('udpated'));
+            console.info('got the solution', response.data?.solution?.text);
             return response.data?.solution?.text;
-        } catch(err) {
+        } catch (err) {
             log(err, 'error while getting captcha answer');
             throw err;
         }
-        
+
     }
 
     async findByBase64(base64: string) {
@@ -120,9 +161,15 @@ class CaptchaController {
         return result;
     }
 
-    async findByToken(token: string) {
-        const result = await Captcha.findOne({ image: token }, { answer: 1 });
-        return result;
+    async findByToken(token: Number) {
+        try {
+            console.log('finding captcha by token', token);
+            const result = await Captcha.findOne({ taskId: token }, { answer: 1 });
+            return result;
+        } catch (err) {
+            log(err, 'error while finding captcha by token');
+            return null
+        }
     }
 }
 

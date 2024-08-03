@@ -9,7 +9,7 @@ const CaptchaSchema = new Schema({
         background: true
     },
     taskId: {
-        type: String,
+        type: Number,
         index: true,
         background: true
     },

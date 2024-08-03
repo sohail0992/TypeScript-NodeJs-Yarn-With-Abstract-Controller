@@ -17,9 +17,24 @@ const UserSchema = new Schema({
     },
     subscription: {
 		months: [String],
-		subscriptionEmailOnly: Boolean,
 		centers: [String]
-	}
+	},
+    isPaid: {
+        type: Boolean,
+        default: false,
+        index: true,
+        background: true
+     },
+     isTrail: {
+        type: Boolean,
+        default: false,
+        index: true,
+        background: true
+    },
+	slotAvailibityAlertOnly: {
+        type: Boolean,
+        default: false,
+    }
 }, { timestamps: true, strict: false });
 
 export default mongoose.model<UserDTO>('User', UserSchema);

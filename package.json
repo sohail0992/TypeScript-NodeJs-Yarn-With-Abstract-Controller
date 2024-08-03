@@ -12,7 +12,8 @@
     "clean": "tsc --build --clean",
     "start:prod": "node dist/server.js",
     "debug": "export DEBUG=* && npm start",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "aws-deploy": "tsc -p . && sls deploy"
   },
   "repository": {
     "type": "git",

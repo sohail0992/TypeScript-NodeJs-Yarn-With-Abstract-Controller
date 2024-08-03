@@ -18,6 +18,10 @@ export class CaptchaRoutes extends CommonRoutesConfig {
             .get(
                 CaptchaController.getCaptchByToken.bind(CaptchaController));
 
+        this.app.route(`/create-and-solve-captcha`)
+            .post(
+                CaptchaController.createAndSolve.bind(CaptchaController))
+
         this.app.route(`/captcha/find-with-conditions`)
             .post(CaptchaController.getData.bind(CaptchaController));
 
