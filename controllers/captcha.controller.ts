@@ -37,53 +37,59 @@ class CaptchaController {
             res.status(200).send(result);
         } catch (err) {
             console.error(err, 'errro on create')
-            log(err, 'error on add Data');
+            log(err, 'error on createAndSolve');
             res.status(500).send(err);
         }
     }
 
     async createCaptchaWithTaskId(data: any, waitForAnswer: boolean) {
-        const existingRecord = <any>await this.findByBase64(data.image);
-        if (existingRecord) {
-            if (existingRecord?.answer) {
-                return { existingRecord: true, answer: existingRecord.answer, taskId: existingRecord.taskId };
-            }
-            const timeSofar = new Date().getTime() - new Date(existingRecord.updatedAt).getTime();
-            console.info(timeSofar, 'timeSofar')
-            // if time so far is less than 15 min then return the existing record
-            if (timeSofar < 900000) {
-                console.info('Time is less than 15 min, wait for answer ', waitForAnswer)
-                if (waitForAnswer) {
-                    const resp = await this.getTheAnswer(existingRecord);
-                    return resp;
+        try {
+            const existingRecord = <any>await this.findByBase64(data.image);
+            if (existingRecord) {
+                if (existingRecord?.answer) {
+                    return { existingRecord: true, answer: existingRecord.answer, taskId: existingRecord.taskId };
                 }
-                return { existingRecord: false, taskId: existingRecord.taskId, err: 'Time is less than 15 min you have to wait and submit again' };
+                const timeSofar = new Date().getTime() - new Date(existingRecord.updatedAt).getTime();
+                console.info(timeSofar, 'timeSofar')
+                // if time so far is less than 15 min then return the existing record
+                if (timeSofar < 900000) {
+                    console.info('Time is less than 15 min, wait for answer ', waitForAnswer)
+                    if (waitForAnswer) {
+                        const resp = await this.getTheAnswer(existingRecord);
+                        return resp;
+                    }
+                    return { existingRecord: false, taskId: existingRecord.taskId, err: 'Time is less than 15 min you have to wait and submit again' };
 
+                }
             }
+            const response = await axios.post(process.env.CAPTCHA_SERVICE + '/createTask', {
+                "clientKey": process.env.CAPTCHA_SERVICE_KEY,
+                "task": {
+                    "type": "ImageToTextTask",
+                    "body": data.image,
+                    "phrase": false,
+                    "case": true,
+                    "numeric": 0,
+                    "math": false,
+                    "minLength": 1,
+                    "maxLength": 5,
+                    "comment": ""
+                },
+                "languagePool": "en"
+            });
+            if (response?.data?.errorCode) throw response.data.errorCode + ' ' + response.data.errorDescription;
+            data.taskId = response.data.taskId;
+            const result = <any>await Captcha.findOneAndUpdate({ image: data.image }, { $set: data }, { upsert: true, new: true }).lean();
+            if (waitForAnswer) {
+                const resp = await this.getTheAnswer(result);
+                return resp;
+            }
+            return { existingRecord: result?.answer ? true : false, taskId: result?.taskId, answer: result?.answer };
+        } catch (err) {
+            console.error(err, 'error on createCaptchaWithTaskId')
+            log(err, 'error on createCaptchaWithTaskId');
+            throw err;
         }
-        const response = await axios.post(process.env.CAPTCHA_SERVICE + '/createTask', {
-            "clientKey": process.env.CAPTCHA_SERVICE_KEY,
-            "task": {
-                "type": "ImageToTextTask",
-                "body": data.image,
-                "phrase": false,
-                "case": true,
-                "numeric": 0,
-                "math": false,
-                "minLength": 1,
-                "maxLength": 5,
-                "comment": ""
-            },
-            "languagePool": "en"
-        });
-        if (response?.data?.errorCode) throw response.data.errorCode + ' ' + response.data.errorDescription;
-        data.taskId = response.data.taskId;
-        const result = <any>await Captcha.findOneAndUpdate({ image: data.image }, { $set: data }, { upsert: true, new: true }).lean();
-        if (waitForAnswer) {
-            const resp = await this.getTheAnswer(result);
-            return resp;
-        }
-        return { existingRecord: result?.answer ? true : false, taskId: result?.taskId, answer: result?.answer };
     }
 
     async getTheAnswer(existingRecord: any) {
@@ -93,6 +99,8 @@ class CaptchaController {
                 const answer = await this.getCaptchaAnswer(existingRecord.taskId);
                 if (answer) {
                     return resolve({ existingRecord: true, answer: answer, taskId: existingRecord.taskId });
+                } else {
+                    return reject({ existingRecord: false, taskId: existingRecord.taskId, err: 'Time is less than 15 min you have to wait and submit again' });
                 }
             }, 10000);
         });
@@ -146,8 +154,10 @@ class CaptchaController {
             });
             if (response?.data?.errorCode) throw response.data.errorCode + ' ' + response.data.errorDescription;
             // update answer in db
-            Captcha.findOneAndUpdate({ taskId: token }, { $set: { answer: response.data.solution.text } }).then(() => console.info('udpated'));
-            console.info('got the solution', response.data?.solution?.text);
+            if (response.data?.solution?.text) {
+                Captcha.findOneAndUpdate({ taskId: token }, { $set: { answer: response.data.solution.text } }).then(() => console.info('udpated'));
+                console.info('got the solution', response.data?.solution?.text);
+            }
             return response.data?.solution?.text;
         } catch (err) {
             log(err, 'error while getting captcha answer');

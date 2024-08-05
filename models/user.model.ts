@@ -17,7 +17,17 @@ const UserSchema = new Schema({
     },
     subscription: {
 		months: [String],
-		centers: [String]
+		centers: [String],
+        startDate: {
+            type: Date,
+            default: Date.now
+        },
+        endDate: Date,
+        type: {
+            type: String,
+            enum: ['Trail', 'Regular'],
+            default: 'Regular'
+        },
 	},
     isPaid: {
         type: Boolean,
