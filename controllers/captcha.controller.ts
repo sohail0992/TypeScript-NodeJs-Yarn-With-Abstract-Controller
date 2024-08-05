@@ -59,7 +59,6 @@ class CaptchaController {
                         return resp;
                     }
                     return { existingRecord: false, taskId: existingRecord.taskId, err: 'Time is less than 15 min you have to wait and submit again' };
-
                 }
             }
             const response = await axios.post(process.env.CAPTCHA_SERVICE + '/createTask', {
@@ -84,7 +83,7 @@ class CaptchaController {
                 const resp = await this.getTheAnswer(result);
                 return resp;
             }
-            return { existingRecord: result?.answer ? true : false, taskId: result?.taskId, answer: result?.answer };
+            return { existingRecord: false, taskId: result?.taskId, answer: result?.answer };
         } catch (err) {
             console.error(err, 'error on createCaptchaWithTaskId')
             log(err, 'error on createCaptchaWithTaskId');
@@ -96,9 +95,9 @@ class CaptchaController {
         return new Promise((resolve, reject) => {
             console.info('waiting started for answer at ', new Date().toTimeString() + ' for task', existingRecord.taskId);
             setTimeout(async () => {
-                const answer = await this.getCaptchaAnswer(existingRecord.taskId);
-                if (answer) {
-                    return resolve({ existingRecord: true, answer: answer, taskId: existingRecord.taskId });
+                const result = <any> await this.getCaptchaAnswer(existingRecord.taskId);
+                if (result?.answer) {
+                    return resolve({ existingRecord: result?.existingRecord , answer: result?.answer, taskId: existingRecord.taskId });
                 } else {
                     return reject({ existingRecord: false, taskId: existingRecord.taskId, err: 'Time is less than 15 min you have to wait and submit again' });
                 }
@@ -145,7 +144,10 @@ class CaptchaController {
             console.log('checking solution in db', 'token');
             const existingRecord = <any>await this.findByToken(token);
             if (existingRecord && existingRecord?.answer) {
-                return existingRecord.answer;
+                return {
+                    existingRecord: true,
+                    answer: existingRecord.answer
+                };
             }
             console.info('getting the solution from service');
             const response = await axios.post(process.env.CAPTCHA_SERVICE + '/getTaskResult', {
@@ -158,7 +160,10 @@ class CaptchaController {
                 Captcha.findOneAndUpdate({ taskId: token }, { $set: { answer: response.data.solution.text } }).then(() => console.info('udpated'));
                 console.info('got the solution', response.data?.solution?.text);
             }
-            return response.data?.solution?.text;
+            return {
+                existingRecord: false,
+                answer: response.data?.solution?.text
+            };
         } catch (err) {
             log(err, 'error while getting captcha answer');
             throw err;
