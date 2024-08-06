@@ -92,17 +92,20 @@ class CaptchaController {
     }
 
     async getTheAnswer(existingRecord: any) {
-        return new Promise((resolve, reject) => {
-            console.info('waiting started for answer at ', new Date().toTimeString() + ' for task', existingRecord.taskId);
-            setTimeout(async () => {
-                const result = <any> await this.getCaptchaAnswer(existingRecord.taskId);
+        console.info('Waiting for answer at', new Date().toTimeString(), 'for task', existingRecord.taskId);
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        for (const waitTime of [6000, 10000]) { // Wait for 6 seconds initially, then 10 seconds if needed
+            await delay(waitTime);
+            try {
+                const result = <any>await this.getCaptchaAnswer(existingRecord.taskId);
                 if (result?.answer) {
-                    return resolve({ existingRecord: result?.existingRecord , answer: result?.answer, taskId: existingRecord.taskId });
-                } else {
-                    return reject({ existingRecord: false, taskId: existingRecord.taskId, err: 'Time is less than 15 min you have to wait and submit again' });
+                    return { existingRecord: result.existingRecord, answer: result.answer, taskId: existingRecord.taskId };
                 }
-            }, 10000);
-        });
+            } catch (error) {
+               console.error(error, 'error on getTheAnswer on ' + waitTime + ' for task', existingRecord.taskId);
+            }
+        }
+        throw { existingRecord: false, taskId: existingRecord.taskId, err: 'Captcha solution failed' };
     }
 
     async callBack(req: express.Request, res: express.Response) {
