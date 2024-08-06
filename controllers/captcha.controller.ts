@@ -102,7 +102,7 @@ class CaptchaController {
                     return { existingRecord: result.existingRecord, answer: result.answer, taskId: existingRecord.taskId };
                 }
             } catch (error) {
-               console.error(error, 'error on getTheAnswer on ' + waitTime + ' for task', existingRecord.taskId);
+               throw 'error on getTheAnswer on ' + waitTime + ' for task' + existingRecord.taskId + ' ' + error;
             }
         }
         throw { existingRecord: false, taskId: existingRecord.taskId, err: 'Captcha solution failed' };
