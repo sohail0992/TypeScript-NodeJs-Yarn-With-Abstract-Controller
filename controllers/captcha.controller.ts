@@ -36,7 +36,7 @@ class CaptchaController {
             const result = await this.createCaptchaWithTaskId(data, true);
             res.status(200).send(result);
         } catch (err) {
-            console.error(err, 'errro on create')
+            console.error(err, 'error on createAndSolve')
             log(err, 'error on createAndSolve');
             res.status(500).send(err);
         }
@@ -92,12 +92,12 @@ class CaptchaController {
     }
 
     async getTheAnswer(existingRecord: any) {
-        console.info('Waiting for answer at', new Date().toTimeString(), 'for task', existingRecord.taskId);
         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        for (const waitTime of [4000, 6000, 10000]) { // Wait for 6 seconds initially, then 10 seconds if needed
+        for (const waitTime of [4000, 6000, 10000]) {
             await delay(waitTime);
+            console.info('Waiting for answer at', new Date().toTimeString(), 'for task', existingRecord.taskId, ' at delay ', waitTime);
             try {
-                const result = <any>await this.getCaptchaAnswer(existingRecord.taskId);
+                const result = <any>await this.getCaptchaAnswer(existingRecord.taskId, waitTime === 4000);
                 if (result?.answer) {
                     return { existingRecord: result.existingRecord, answer: result.answer, taskId: existingRecord.taskId };
                 }
@@ -142,15 +142,17 @@ class CaptchaController {
         }
     }
 
-    async getCaptchaAnswer(token: Number) {
+    async getCaptchaAnswer(token: Number, shouldCheckDb: boolean = false) {
         try {
-            console.log('checking solution in db', 'token');
-            const existingRecord = <any>await this.findByToken(token);
-            if (existingRecord && existingRecord?.answer) {
-                return {
-                    existingRecord: true,
-                    answer: existingRecord.answer
-                };
+            if (shouldCheckDb) {
+                console.log('checking solution in db', 'token');
+                const existingRecord = <any>await this.findByToken(token);
+                if (existingRecord && existingRecord?.answer) {
+                    return {
+                        existingRecord: true,
+                        answer: existingRecord.answer
+                    };
+                }
             }
             console.info('getting the solution from service');
             const response = await axios.post(process.env.CAPTCHA_SERVICE + '/getTaskResult', {
