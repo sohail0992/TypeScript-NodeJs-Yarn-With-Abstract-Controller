@@ -94,7 +94,7 @@ class CaptchaController {
     async getTheAnswer(existingRecord: any) {
         console.info('Waiting for answer at', new Date().toTimeString(), 'for task', existingRecord.taskId);
         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        for (const waitTime of [6000, 10000]) { // Wait for 6 seconds initially, then 10 seconds if needed
+        for (const waitTime of [4000, 6000, 10000]) { // Wait for 6 seconds initially, then 10 seconds if needed
             await delay(waitTime);
             try {
                 const result = <any>await this.getCaptchaAnswer(existingRecord.taskId);
