@@ -93,11 +93,11 @@ class CaptchaController {
 
     async getTheAnswer(existingRecord: any) {
         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        for (const waitTime of [4000, 6000, 10000]) {
+        for (const waitTime of [2000, 4000, 6000, 10000]) {
             await delay(waitTime);
             console.info('Waiting for answer at', new Date().toTimeString(), 'for task', existingRecord.taskId, ' at delay ', waitTime);
             try {
-                const result = <any>await this.getCaptchaAnswer(existingRecord.taskId, waitTime === 4000);
+                const result = <any>await this.getCaptchaAnswer(existingRecord.taskId, waitTime === 2000);
                 if (result?.answer) {
                     return { existingRecord: result.existingRecord, answer: result.answer, taskId: existingRecord.taskId };
                 }
