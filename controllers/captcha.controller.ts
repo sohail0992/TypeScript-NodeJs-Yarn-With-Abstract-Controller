@@ -177,8 +177,13 @@ class CaptchaController {
     }
 
     async findByBase64(base64: string) {
-        const result = await Captcha.findOne({ image: base64 });
-        return result;
+        try {
+            const result = await Captcha.findOne({ image: base64 });
+            return result;
+        } catch (err) {
+            console.error(err, 'error while finding captcha by image');
+            return null;
+        }
     }
 
     async findByToken(token: Number) {

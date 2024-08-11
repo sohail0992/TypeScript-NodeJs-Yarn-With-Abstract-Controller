@@ -46,10 +46,8 @@ app.use(expressWinston.errorLogger({
     )
 }));
 
-app.get('/2captcha.txt', (req: express.Request, res: express.Response) => {
+app.get('/2captcha.txt', (_, res: express.Response) => {
     const text = process.env.TEXT;
-    res.setHeader('Content-type', "application/octet-stream");
-    res.setHeader('Content-disposition', 'attachment; filename=2captcha.txt');
     res.send(text);
 });
 
