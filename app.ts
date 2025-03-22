@@ -6,7 +6,7 @@ import * as bodyparser from 'body-parser';
 import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import serverless from "serverless-http";
-
+import * as path from 'path'; 
 import cors from 'cors'
 import { CommonRoutesConfig } from './common/common.routes.config';
 import { UserRoutes } from './routes/user.routes.config';
@@ -46,11 +46,15 @@ app.use(expressWinston.errorLogger({
     )
 }));
 
-app.get('/2captcha.txt', (_, res: express.Response) => {
-    const text = process.env.TEXT;
-    res.send(text);
+app.get('/2captcha.txt', (req, res) => {
+    const filePath = path.join(__dirname, '2captcha.txt');
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error('Error serving 2captcha.txt:', err);
+        res.sendStatus(500);
+      }
+    });
 });
-
 
 app.use(verifyToken);
 
@@ -67,7 +71,6 @@ if (process.env.SERVERLESS === 'true') {
     module.exports.handler = lambdaHandler;
 } else {
     server.listen(port, () => {
-        debugLog(`Server running at http://localhost:${port}`);
         console.info(`Server running at http://localhost:${port}`);
         routes.forEach((route: CommonRoutesConfig) => {
             debugLog(`Routes configured for ${route.getName()}`);

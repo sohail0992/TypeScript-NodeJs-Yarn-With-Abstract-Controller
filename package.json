@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "ts-node-dev --respawn app.ts",
-    "deploy": "tsc --build --clean && tsc -p . && sls deploy",
+    "deploy": "tsc --build --clean && tsc -p . && cp 2captcha.txt dist/ && sls deploy",
     "start": "ts-node --transpile-only app.ts",
     "dev": "tsc && node dist/app.js",
     "build": "tsc -p .",

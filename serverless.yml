@@ -6,7 +6,11 @@ provider:
   region: us-east-1
   environment:
     SERVERLESS: true
-
+    TOKEN: 'b7e8fdd2e1a5a4f8c4d2e3f0d1a7b5e6_BA'
+    MONGO_URL: 'mongodb+srv://crmuser:BmyDhjt2rSrWSktH@crm.9dk5luc.mongodb.net/subscriber_management?retryWrites=true&w=majority'
+    CAPTCHA_SERVICE_KEY: 'd3a2e87ed08d3c91e0ce6f110f3590b5'
+    CAPTCHA_SERVICE: 'https://api.2captcha.com'
+    TEXT: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMzQxNjU3NSIsImlhdCI6MTcyMDQ1MjY3NH0.pMi8tfWWdILEfBqy7nKDenDoSU46nSn4m-ieNU3W394'
 functions:
   app:
     handler: dist/app.handler
