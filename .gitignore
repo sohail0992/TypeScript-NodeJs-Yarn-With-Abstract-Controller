@@ -42,3 +42,7 @@ yarn.lock
 
 # add .serverless directory
 .serverless/*
+
+.serverless
+
+.serverless/subscribers.zip
