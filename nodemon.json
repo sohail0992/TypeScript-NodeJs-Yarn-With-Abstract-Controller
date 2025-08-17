@@ -1,0 +1,9 @@
+{
+  "watch": ["**/*.ts"],
+  "ignore": ["node_modules", "dist", "*.test.ts"],
+  "exec": "ts-node --transpile-only app.ts",
+  "ext": "ts,js,json",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

@@ -20,8 +20,16 @@ const port = process.env.PORT || 3000;
 console.info(`Server running at http://localhost:${port}`);
 const routes: Array<CommonRoutesConfig> = [];
 const debugLog: debug.IDebugger = debug('app');
-mongoose.connect(process.env.MONGO_URL || '').catch(console.error);
+
+// Only connect to MongoDB if MONGO_URL is provided
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost:27017/tra-api';
+mongoose.connect(mongoUrl).catch(console.error);
 const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+    console.log(`Connected to MongoDB at ${mongoUrl}`);
+});
+
 app.use(bodyparser.json());
 app.use(cors());
 

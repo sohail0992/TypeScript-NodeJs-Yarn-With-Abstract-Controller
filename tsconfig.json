@@ -6,7 +6,23 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "rootDir": "./",
-
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["*"],
+      "@/services/*": ["services/*"],
+      "@/common/*": ["common/*"],
+      "@/controllers/*": ["controllers/*"],
+      "@/models/*": ["models/*"],
+      "@/routes/*": ["routes/*"],
+      "@/middleware/*": ["middleware/*"],
+      "@/dto/*": ["dto/*"]
+    }
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }
