@@ -110,27 +110,16 @@
                     {
                       "Effect": "Allow",
                       "Principal": {
-                        "Service": [
-                          "lambda.amazonaws.com"
-                        ]
+                        "Service": ["lambda.amazonaws.com"]
                       },
-                      "Action": [
-                        "sts:AssumeRole"
-                      ]
+                      "Action": ["sts:AssumeRole"]
                     }
                   ]
                 },
                 "Policies": [
                   {
                     "PolicyName": {
-                      "Fn::Join": [
-                        "-",
-                        [
-                          "subscribers",
-                          "dev",
-                          "lambda"
-                        ]
-                      ]
+                      "Fn::Join": ["-", ["subscribers", "dev", "lambda"]]
                     },
                     "PolicyDocument": {
                       "Version": "2012-10-17",
@@ -150,9 +139,7 @@
                         },
                         {
                           "Effect": "Allow",
-                          "Action": [
-                            "logs:PutLogEvents"
-                          ],
+                          "Action": ["logs:PutLogEvents"],
                           "Resource": [
                             {
                               "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/subscribers-dev*:*:*"
@@ -201,15 +188,10 @@
                   }
                 },
                 "Role": {
-                  "Fn::GetAtt": [
-                    "IamRoleLambdaExecution",
-                    "Arn"
-                  ]
+                  "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"]
                 }
               },
-              "DependsOn": [
-                "AppLogGroup"
-              ]
+              "DependsOn": ["AppLogGroup"]
             },
             "AppLambdaVersion6IyqK7EiocMYqTV9poLUuLSvLlNIyR7bqfOkAfmK9Y": {
               "Type": "AWS::Lambda::Version",
@@ -226,9 +208,7 @@
               "Properties": {
                 "Name": "dev-subscribers",
                 "EndpointConfiguration": {
-                  "Types": [
-                    "EDGE"
-                  ]
+                  "Types": ["EDGE"]
                 },
                 "Policy": ""
               }
@@ -237,10 +217,7 @@
               "Type": "AWS::ApiGateway::Resource",
               "Properties": {
                 "ParentId": {
-                  "Fn::GetAtt": [
-                    "ApiGatewayRestApi",
-                    "RootResourceId"
-                  ]
+                  "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"]
                 },
                 "PathPart": "{proxy+}",
                 "RestApiId": {
@@ -286,10 +263,7 @@
                   ]
                 },
                 "ResourceId": {
-                  "Fn::GetAtt": [
-                    "ApiGatewayRestApi",
-                    "RootResourceId"
-                  ]
+                  "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"]
                 },
                 "RestApiId": {
                   "Ref": "ApiGatewayRestApi"
@@ -347,10 +321,7 @@
                 "HttpMethod": "ANY",
                 "RequestParameters": {},
                 "ResourceId": {
-                  "Fn::GetAtt": [
-                    "ApiGatewayRestApi",
-                    "RootResourceId"
-                  ]
+                  "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"]
                 },
                 "RestApiId": {
                   "Ref": "ApiGatewayRestApi"
@@ -374,10 +345,7 @@
                         },
                         ":lambda:path/2015-03-31/functions/",
                         {
-                          "Fn::GetAtt": [
-                            "AppLambdaFunction",
-                            "Arn"
-                          ]
+                          "Fn::GetAtt": ["AppLambdaFunction", "Arn"]
                         },
                         "/invocations"
                       ]
@@ -386,9 +354,7 @@
                 },
                 "MethodResponses": []
               },
-              "DependsOn": [
-                "AppLambdaPermissionApiGateway"
-              ]
+              "DependsOn": ["AppLambdaPermissionApiGateway"]
             },
             "ApiGatewayMethodProxyVarAny": {
               "Type": "AWS::ApiGateway::Method",
@@ -420,10 +386,7 @@
                         },
                         ":lambda:path/2015-03-31/functions/",
                         {
-                          "Fn::GetAtt": [
-                            "AppLambdaFunction",
-                            "Arn"
-                          ]
+                          "Fn::GetAtt": ["AppLambdaFunction", "Arn"]
                         },
                         "/invocations"
                       ]
@@ -432,9 +395,7 @@
                 },
                 "MethodResponses": []
               },
-              "DependsOn": [
-                "AppLambdaPermissionApiGateway"
-              ]
+              "DependsOn": ["AppLambdaPermissionApiGateway"]
             },
             "ApiGatewayDeployment1719771161774": {
               "Type": "AWS::ApiGateway::Deployment",
@@ -455,10 +416,7 @@
               "Type": "AWS::Lambda::Permission",
               "Properties": {
                 "FunctionName": {
-                  "Fn::GetAtt": [
-                    "AppLambdaFunction",
-                    "Arn"
-                  ]
+                  "Fn::GetAtt": ["AppLambdaFunction", "Arn"]
                 },
                 "Action": "lambda:InvokeFunction",
                 "Principal": "apigateway.amazonaws.com",
@@ -629,10 +587,7 @@
                 "method": "any",
                 "cors": {
                   "origin": "*",
-                  "methods": [
-                    "OPTIONS",
-                    "ANY"
-                  ],
+                  "methods": ["OPTIONS", "ANY"],
                   "headers": [
                     "Content-Type",
                     "X-Amz-Date",
@@ -653,10 +608,7 @@
                 "method": "any",
                 "cors": {
                   "origin": "*",
-                  "methods": [
-                    "OPTIONS",
-                    "ANY"
-                  ],
+                  "methods": ["OPTIONS", "ANY"],
                   "headers": [
                     "Content-Type",
                     "X-Amz-Date",
@@ -681,14 +633,10 @@
           "versionLogicalId": "AppLambdaVersion6IyqK7EiocMYqTV9poLUuLSvLlNIyR7bqfOkAfmK9Y"
         }
       },
-      "plugins": [
-        "serverless-offline"
-      ]
+      "plugins": ["serverless-offline"]
     },
     "serviceRawFile": "service: subscribers\n\nprovider:\n  name: aws\n  runtime: nodejs18.x\n  region: us-east-1\n  environment:\n    SERVERLESS: true\n    TOKEN: 'b7e8fdd2e1a5a4f8c4d2e3f0d1a7b5e6_BA'\n    MONGO_URL: 'mongodb+srv://crmuser:BmyDhjt2rSrWSktH@crm.9dk5luc.mongodb.net/subscriber_management?retryWrites=true&w=majority'\n\nfunctions:\n  app:\n    handler: dist/app.handler\n    events:\n      - http:\n          path: /\n          method: ANY\n          cors: true\n      - http:\n          path: /{proxy+}\n          method: ANY\n          cors: true\n\nplugins:\n  - serverless-offline",
-    "command": [
-      "deploy"
-    ],
+    "command": ["deploy"],
     "options": {},
     "error": null,
     "params": {},

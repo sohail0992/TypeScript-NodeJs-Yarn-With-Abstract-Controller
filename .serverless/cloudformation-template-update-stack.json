@@ -86,27 +86,16 @@
             {
               "Effect": "Allow",
               "Principal": {
-                "Service": [
-                  "lambda.amazonaws.com"
-                ]
+                "Service": ["lambda.amazonaws.com"]
               },
-              "Action": [
-                "sts:AssumeRole"
-              ]
+              "Action": ["sts:AssumeRole"]
             }
           ]
         },
         "Policies": [
           {
             "PolicyName": {
-              "Fn::Join": [
-                "-",
-                [
-                  "subscribers",
-                  "dev",
-                  "lambda"
-                ]
-              ]
+              "Fn::Join": ["-", ["subscribers", "dev", "lambda"]]
             },
             "PolicyDocument": {
               "Version": "2012-10-17",
@@ -126,9 +115,7 @@
                 },
                 {
                   "Effect": "Allow",
-                  "Action": [
-                    "logs:PutLogEvents"
-                  ],
+                  "Action": ["logs:PutLogEvents"],
                   "Resource": [
                     {
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/subscribers-dev*:*:*"
@@ -177,15 +164,10 @@
           }
         },
         "Role": {
-          "Fn::GetAtt": [
-            "IamRoleLambdaExecution",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"]
         }
       },
-      "DependsOn": [
-        "AppLogGroup"
-      ]
+      "DependsOn": ["AppLogGroup"]
     },
     "AppLambdaVersion6IyqK7EiocMYqTV9poLUuLSvLlNIyR7bqfOkAfmK9Y": {
       "Type": "AWS::Lambda::Version",
@@ -202,9 +184,7 @@
       "Properties": {
         "Name": "dev-subscribers",
         "EndpointConfiguration": {
-          "Types": [
-            "EDGE"
-          ]
+          "Types": ["EDGE"]
         },
         "Policy": ""
       }
@@ -213,10 +193,7 @@
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
         "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
+          "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"]
         },
         "PathPart": "{proxy+}",
         "RestApiId": {
@@ -262,10 +239,7 @@
           ]
         },
         "ResourceId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
+          "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"]
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -323,10 +297,7 @@
         "HttpMethod": "ANY",
         "RequestParameters": {},
         "ResourceId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
+          "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"]
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -350,10 +321,7 @@
                 },
                 ":lambda:path/2015-03-31/functions/",
                 {
-                  "Fn::GetAtt": [
-                    "AppLambdaFunction",
-                    "Arn"
-                  ]
+                  "Fn::GetAtt": ["AppLambdaFunction", "Arn"]
                 },
                 "/invocations"
               ]
@@ -362,9 +330,7 @@
         },
         "MethodResponses": []
       },
-      "DependsOn": [
-        "AppLambdaPermissionApiGateway"
-      ]
+      "DependsOn": ["AppLambdaPermissionApiGateway"]
     },
     "ApiGatewayMethodProxyVarAny": {
       "Type": "AWS::ApiGateway::Method",
@@ -396,10 +362,7 @@
                 },
                 ":lambda:path/2015-03-31/functions/",
                 {
-                  "Fn::GetAtt": [
-                    "AppLambdaFunction",
-                    "Arn"
-                  ]
+                  "Fn::GetAtt": ["AppLambdaFunction", "Arn"]
                 },
                 "/invocations"
               ]
@@ -408,9 +371,7 @@
         },
         "MethodResponses": []
       },
-      "DependsOn": [
-        "AppLambdaPermissionApiGateway"
-      ]
+      "DependsOn": ["AppLambdaPermissionApiGateway"]
     },
     "ApiGatewayDeployment1719771161774": {
       "Type": "AWS::ApiGateway::Deployment",
@@ -431,10 +392,7 @@
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
-          "Fn::GetAtt": [
-            "AppLambdaFunction",
-            "Arn"
-          ]
+          "Fn::GetAtt": ["AppLambdaFunction", "Arn"]
         },
         "Action": "lambda:InvokeFunction",
         "Principal": "apigateway.amazonaws.com",

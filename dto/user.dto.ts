@@ -1,9 +1,9 @@
 export interface UserDTO {
-    firstName: String,
-    lastName: String,
-    phone: {
-        type: String,
-        index: true,
-        background: true
-    }
+  firstName: string;
+  lastName: string;
+  phone: {
+    type: string;
+    index: true;
+    background: true;
+  };
 }
